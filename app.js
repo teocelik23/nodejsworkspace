@@ -6,17 +6,14 @@ const port = 3000;
 
 const jsonData = JSON.parse(fs.readFileSync('data.json', 'utf8'));
 
-let sum = 0;
+var sum = 0;
 jsonData.forEach(item => {
   sum += item.value;
 });
 
 app.get('/', (req, res) => {
-  const calculator = new Calculations();
 
-  // Use specific values for sum and result
-  const concreteSum = 15;
-  const concreteResult = 5;
+  let result = Calculations.calculateHypotenuse(3, 4);
 
   fs.readFile('index.html', 'utf8', (err, data) => {
     if (err) {
@@ -27,8 +24,8 @@ app.get('/', (req, res) => {
 
     // Replace placeholders with concrete values
     const html = data
-      .replace('<%= sum %>', concreteSum)
-      .replace('<%= result %>', concreteResult);
+      .replace('<%= sum %>', sum)
+      .replace('<%= result %>', result);
 
     res.set('Content-Type', 'text/html');
     res.send(html);
