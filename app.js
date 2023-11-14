@@ -1,33 +1,40 @@
 const express = require('express');
+const Calculations = require('./calculations');
 const app = express();
 const fs = require('fs');
-const port = 3000; // You can use any available port
+const port = 3000;
 
-const jsonData = JSON.parse(fs.readFileSync('data.json','utf8'));
+const jsonData = JSON.parse(fs.readFileSync('data.json', 'utf8'));
 
 let sum = 0;
 jsonData.forEach(item => {
-  sum += item.value; // Assuming 'value' is a key in your JSON data
+  sum += item.value;
 });
 
 app.get('/', (req, res) => {
-    // Read the HTML file and push text into it
-    const html = `
-    <html>
-    <head><title>Calculated Results</title></head>
-    <body>
-      <h1>Calculated Results</h1>
-      <p>Sum of values from JSON data: ${sum}</p>
-    </body>
-    </html>
-  `;
+  const calculator = new Calculations();
 
-  // Set the Content-Type header to specify HTML
-  res.set('Content-Type', 'text/html');
-  // Send the generated HTML with calculated results to the client
-  res.send(html);
+  // Use specific values for sum and result
+  const concreteSum = 15;
+  const concreteResult = 5;
+
+  fs.readFile('index.html', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error loading template file');
+      return;
+    }
+
+    // Replace placeholders with concrete values
+    const html = data
+      .replace('<%= sum %>', concreteSum)
+      .replace('<%= result %>', concreteResult);
+
+    res.set('Content-Type', 'text/html');
+    res.send(html);
+  });
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
